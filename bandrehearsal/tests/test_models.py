@@ -15,16 +15,19 @@ class TestMyView(unittest.TestCase):
 
     def test_user(self):
         from ..models import User
-        user = User(login='user',
+        user = User(login='someone',
                 password='pswd',
                 email='some@mail.com')
         DBSession.add(user)
+        DBSession.flush()
         self.assertNotEqual('pswd', user.password)
         p1 = user.password
         user.password = 'new pswd'
         p2 = user.password
         self.assertNotEqual('new pswd', user.password)
+        self.assertTrue(user.check_password('new pswd'))
         self.assertNotEqual(p1, p2)
+        self.assertEqual(User.log('someone', 'new pswd'), user)
 
     def test_bands(self):
         from ..models import User, Band

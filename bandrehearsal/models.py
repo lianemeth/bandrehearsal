@@ -6,6 +6,7 @@ from sqlalchemy.orm import (
     scoped_session, sessionmaker,
     synonym, relationship)
 
+from sqlalchemy.orm.exc import NoResultFound
 
 from zope.sqlalchemy import ZopeTransactionExtension
 
@@ -18,7 +19,7 @@ Base = declarative_base()
 
 
 class User(Base):
-    __tablename__ = 'user'
+    __tablename__ = 'users'
     
     id = sa.Column(sa.Integer, primary_key=True)
     name = sa.Column(sa.Text)
@@ -28,12 +29,6 @@ class User(Base):
     phone = sa.Column(sa.Text)
     creation = sa.Column(sa.DateTime, default=datetime.now)
 
-    def __init__(self, password, login, email, phone=None, name=None):
-        self.password = password
-        self.login = login
-        self.email = email
-        self.phone = phone
-        self.name = name
 
     @property
     def password(self):
@@ -47,10 +42,24 @@ class User(Base):
 
     def check_password(self, passwd):
         return sha256_crypt.verify(passwd, self.password)
+    
+    class WrongCredential(Exception):
+        pass
+
+    @classmethod
+    def log(cls, user_login, password):
+        try:
+            user = DBSession.query(User).filter(user_login == User.login).one()
+        except NoResultFound:
+            raise cls.WrongCredential
+        if user.check_password(password):
+            return user
+        else:
+            raise cls.WrongCredential
 
 
 class Band(Base):
-    __tablename__ = 'band'
+    __tablename__ = 'bands'
 
     id = sa.Column(sa.Integer, primary_key=True)
     name = sa.Column(sa.Text)
@@ -65,6 +74,6 @@ class Band(Base):
 class UserBand(Base):
     __tablename__ = 'user_x_band'
 
-    band_id = sa.Column(sa.Integer, sa.ForeignKey('band.id'), primary_key=True)
-    user_id = sa.Column(sa.Integer, sa.ForeignKey('user.id'), primary_key=True)
+    band_id = sa.Column(sa.Integer, sa.ForeignKey('bands.id'), primary_key=True)
+    user_id = sa.Column(sa.Integer, sa.ForeignKey('users.id'), primary_key=True)
     role = sa.Column(sa.Text)
