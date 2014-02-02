@@ -25,7 +25,7 @@ class LoginView(object):
         self.next_page = request.params.get('next') or request.route_url('home')
         self.buttons = ('submit', )
 
-    @view_config(route_name='login', renderer='templates/login.mako')
+    @view_config(route_name='login', renderer='bandrehearsal:templates/login.mako')
     def login(self):
         if self.request.POST:
             user = self.request.POST.get('user', '')

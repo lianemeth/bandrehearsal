@@ -3,6 +3,7 @@ from pyramid import testing
 from pyramid.httpexceptions import HTTPFound
 from ..models import DBSession
 
+
 class TestViews(unittest.TestCase):
     def setUp(self):
         self.config = testing.setUp()
@@ -15,20 +16,18 @@ class TestViews(unittest.TestCase):
         from ..models import Base
         DBSession.configure(bind=engine)
         Base.metadata.create_all(engine)
-        self.create_test_objects()
-
-    def create_test_objects(self):
-        from ..models import User
-        user = User(login='user',
-                password='password',
-                email='user@user.com')
-        DBSession.add(user)
 
     def tearDown(self):
         testing.tearDown()
 
     def test_login_view(self):
         from ..views.login import LoginView
+        from ..models import User
+        user = User(login='user',
+                password='password',
+                email='user@user.com')
+        DBSession.add(user)
+        DBSession.flush()
         request = testing.DummyRequest()
         request.POST = {'user' : 'user',
                         'password' : 'password'}
@@ -40,4 +39,15 @@ class TestViews(unittest.TestCase):
         loginview1 = LoginView(request1)
         res = loginview1.login()
         self.assertTrue(res['fail'])
+
+    def test_home(self):
+        from ..views.home import home
+        self.config.testing_securitypolicy(userid='user',
+                permissive=False)
+        request = testing.DummyRequest()
+        self.assertTrue(home(request)['user'])
+        self.config.testing_securitypolicy(userid='',
+                permissive=False)
+        request = testing.DummyRequest()
+        self.assertFalse(home(request)['user'])
 
