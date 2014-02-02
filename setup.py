@@ -16,6 +16,8 @@ requires = [
     'zope.sqlalchemy',
     'waitress',
     'passlib',
+    'deform',
+    'colander',
     ]
 
 setup(name='bandrehearsal',

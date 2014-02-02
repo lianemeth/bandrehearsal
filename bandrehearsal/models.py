@@ -57,6 +57,8 @@ class User(Base):
         else:
             raise cls.WrongCredential
 
+    def __unicode__(self):
+        return self.name
 
 class Band(Base):
     __tablename__ = 'bands'
@@ -70,6 +72,8 @@ class Band(Base):
             secondary="user_x_band",
             backref="bands")
 
+    def __unicode__(self):
+        return self.name
 
 class UserBand(Base):
     __tablename__ = 'user_x_band'
@@ -77,3 +81,6 @@ class UserBand(Base):
     band_id = sa.Column(sa.Integer, sa.ForeignKey('bands.id'), primary_key=True)
     user_id = sa.Column(sa.Integer, sa.ForeignKey('users.id'), primary_key=True)
     role = sa.Column(sa.Text)
+
+    def __unicode__(self):
+        return self.name
