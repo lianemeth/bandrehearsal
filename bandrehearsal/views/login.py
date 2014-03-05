@@ -37,7 +37,7 @@ class LoginView(object):
                 self.fail = True
             else:
                 headers = remember(self.request, logged_user.id)
-                return HTTPFound(location=next, headers=headers)
+                return HTTPFound(location=self.next_page, headers=headers)
         form = self.login_form()
         return { 'form' : form.render(),
                  'requirements' : form.get_widget_resources(),
