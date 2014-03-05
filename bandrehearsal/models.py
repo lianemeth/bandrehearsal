@@ -36,6 +36,7 @@ class User(Base):
     login = sa.Column(sa.String, nullable=False, unique=True)
     email = sa.Column(sa.Text, nullable=False)
     phone = sa.Column(sa.Text)
+    active = sa.Column(sa.Boolean, default=True)
     creation = sa.Column(sa.DateTime, default=datetime.now)
 
 
@@ -66,8 +67,17 @@ class User(Base):
         else:
             raise cls.WrongCredential
 
+    @classmethod
+    def get(cls, id):
+        return DBSession.query(User).get(id)
+
+    @classmethod
+    def actives(cls):
+        return DBSession.query(User).filter_by(active=True)
+
     def __unicode__(self):
         return self.name
+
 
 class Band(Base):
     __tablename__ = 'bands'

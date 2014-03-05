@@ -51,13 +51,15 @@ class LoginView(object):
 @view_config(name='list', context=User,
     renderer='bandrehearsal:templates/users.mako', permission='edit')
 def list_users(request):
-    return {}
+    users =  User.actives()
+    return {'list' : users}
 
 
 @view_config(name='delete', context=User,
     renderer='bandrehearsal:templates/users.mako', permission='edit')
 def delete_user(request):
-    return {}
+    request.context.active = False
+    return {'status' : 'success'}
 
 
 @view_config(name='edit', context=User,
@@ -69,4 +71,4 @@ def edit_user(request):
 @view_config(name='view', context=User,
     renderer='bandrehearsal:templates/users.mako', permission='view')
 def view_user(request):
-    return {}
+    return {'user' : request.context}

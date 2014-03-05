@@ -81,9 +81,9 @@ class TestViews(unittest.TestCase):
         DBSession.flush()
         id = user.id
         request = testing.DummyRequest()
-        request.POST = { 'id' : id }
+        request.context = user
         res = delete_user(request)
-        self.assertIsNone(DBSession.query(User).get(id))
+        self.assertFalse(DBSession.query(User).get(id).active)
 
     def test_edit_user(self):
         from ..models import User
@@ -95,8 +95,21 @@ class TestViews(unittest.TestCase):
         DBSession.flush()
         id = user.id
         request = testing.DummyRequest()
-        request.POST = { 'id' : id,
-                'email' : 'new@nova.com'}
+        request.POST = {'email' : 'new@nova.com'}
+        request.context = user
         res = edit_user(request)
         user = DBSession.query(User).get(id)
         self.assertEqual(user.email, request.POST['email'])
+
+    def test_view_user(self):
+        from ..models import User
+        from ..views.login import view_user
+        user = User(login='user',
+                password='password',
+                email='user@user.com')
+        DBSession.add(user)
+        DBSession.flush()
+        request = testing.DummyRequest()
+        request.context = user
+        res = view_user(request)
+        self.assertEqual(res['user'], user)
