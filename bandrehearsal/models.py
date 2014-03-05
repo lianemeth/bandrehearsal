@@ -12,6 +12,8 @@ from zope.sqlalchemy import ZopeTransactionExtension
 
 from passlib.hash import sha256_crypt
 
+from pyramid.security import Allow, Authenticated
+
 from datetime import datetime
 
 DBSession = scoped_session(sessionmaker(extension=ZopeTransactionExtension()))
@@ -21,6 +23,13 @@ Base = declarative_base()
 class User(Base):
     __tablename__ = 'users'
     
+    @property
+    def __acl__(self):
+        acl = [(Allow, 'admin', 'edit')]
+        acl += (Allow, self.login, 'edit')
+        acl += (Allow, Authenticated, 'view')
+        return acl
+
     id = sa.Column(sa.Integer, primary_key=True)
     name = sa.Column(sa.Text)
     pswd = sa.Column(sa.String, nullable=False)

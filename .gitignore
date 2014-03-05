@@ -38,3 +38,6 @@ nosetests.xml
 
 # SQLite
 *.sqlite
+
+# vim swap
+*.swp

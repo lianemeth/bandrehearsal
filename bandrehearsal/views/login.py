@@ -36,7 +36,7 @@ class LoginView(object):
             except User.WrongCredential:
                 self.fail = True
             else:
-                headers = remember(self.request, logged_user.id)
+                headers = remember(self.request, logged_user.login)
                 return HTTPFound(location=self.next_page, headers=headers)
         form = self.login_form()
         return { 'form' : form.render(),
@@ -46,3 +46,27 @@ class LoginView(object):
 
     def login_form(self):
         return deform.Form(LoginSchema(), buttons=self.buttons)
+
+
+@view_config(name='list', context=User,
+    renderer='bandrehearsal:templates/users.mako', permission='edit')
+def list_users(request):
+    return {}
+
+
+@view_config(name='delete', context=User,
+    renderer='bandrehearsal:templates/users.mako', permission='edit')
+def delete_user(request):
+    return {}
+
+
+@view_config(name='edit', context=User,
+    renderer='bandrehearsal:templates/users.mako', permission='edit')
+def edit_user(request):
+    return  {}
+
+
+@view_config(name='view', context=User,
+    renderer='bandrehearsal:templates/users.mako', permission='view')
+def view_user(request):
+    return {}

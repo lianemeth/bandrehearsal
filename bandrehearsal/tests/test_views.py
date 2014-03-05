@@ -19,6 +19,7 @@ class TestViews(unittest.TestCase):
 
     def tearDown(self):
         testing.tearDown()
+        DBSession.remove()
 
     def test_login_view(self):
         from ..views.login import LoginView
@@ -53,3 +54,49 @@ class TestViews(unittest.TestCase):
         request = testing.DummyRequest()
         self.assertFalse(home(request)['user'])
 
+    def test_list_users(self):
+        from ..models import User
+        from ..views.login import list_users
+        user1 = User(login='user',
+                password='password',
+                email='user@user.com')
+        user2 = User(login='user2',
+                password='password',
+                email='user2@user.com')
+        DBSession.add(user1)
+        DBSession.add(user2)
+        DBSession.flush()
+        request = testing.DummyRequest()
+        res = list_users(request)
+        self.assertTrue(user1 in res['list'])
+        self.assertTrue(user1 in res['list'])
+
+    def test_delete_user(self):
+        from ..models import User
+        from ..views.login import delete_user
+        user = User(login='user',
+                password='password',
+                email='user@user.com')
+        DBSession.add(user)
+        DBSession.flush()
+        id = user.id
+        request = testing.DummyRequest()
+        request.POST = { 'id' : id }
+        res = delete_user(request)
+        self.assertIsNone(DBSession.query(User).get(id))
+
+    def test_edit_user(self):
+        from ..models import User
+        from ..views.login import edit_user
+        user = User(login='user',
+                password='password',
+                email='user@user.com')
+        DBSession.add(user)
+        DBSession.flush()
+        id = user.id
+        request = testing.DummyRequest()
+        request.POST = { 'id' : id,
+                'email' : 'new@nova.com'}
+        res = edit_user(request)
+        user = DBSession.query(User).get(id)
+        self.assertEqual(user.email, request.POST['email'])
