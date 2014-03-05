@@ -35,3 +35,6 @@ nosetests.xml
 .project
 .pydevproject
 .sass-cache
+
+# SQLite
+.sqlite
