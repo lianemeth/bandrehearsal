@@ -1,11 +1,12 @@
 from pyramid.view import view_config
 
-from ..models import DBSession, User
+from ..models import User
 from pyramid.security import remember
 from pyramid.httpexceptions import HTTPFound
 
 import colander
 import deform
+
 
 class LoginSchema(colander.Schema):
     user = colander.SchemaNode(
@@ -37,7 +38,9 @@ class LoginView(object):
             else:
                 headers = remember(self.request, logged_user.id)
                 return HTTPFound(location=next, headers=headers)
-        return { 'form' : self.login_form(),
+        form = self.login_form()
+        return { 'form' : form.render(),
+                 'requirements' : form.get_widget_resources(),
                  'next' : self.next_page,
                  'fail' : self.fail }
 

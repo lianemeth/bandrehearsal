@@ -34,10 +34,11 @@
 				<li><a href="#">Sign in</a></li>
 			</ul>
 			<ul class="left">
-				<li><a href="#">Login</a></li>
+				<li><a href="/login">Login</a></li>
 			</ul>
 		</section>
 	</nav>
 		<%block name="content" />
+		<%block name="after_content" />
 	</body>
 </html>

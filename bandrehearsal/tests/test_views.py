@@ -39,6 +39,8 @@ class TestViews(unittest.TestCase):
         loginview1 = LoginView(request1)
         res = loginview1.login()
         self.assertTrue(res['fail'])
+        self.assertTrue('requirements' in res)
+        self.assertTrue('form' in res)
 
     def test_home(self):
         from ..views.home import home

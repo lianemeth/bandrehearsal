@@ -22,6 +22,7 @@ def main(global_config, **settings):
     authz_policy = ACLAuthorizationPolicy()
     config.set_authorization_policy(authz_policy)
     config.add_static_view('static', 'static', cache_max_age=3600)
+    config.add_static_view('deform', 'deform:static')
     config.add_route('home', '/')
     config.add_route('login', '/login')
     config.add_route('select_band', '/select')
