@@ -4,6 +4,7 @@ from pyramid import testing
 
 from ..models import DBSession
 
+
 class TestMyView(unittest.TestCase):
     def setUp(self):
         self.config = testing.setUp()
@@ -42,12 +43,12 @@ class TestMyView(unittest.TestCase):
         DBSession.flush()
         band = Band(name='The Mini Ponies',
                 description='A post-rock brony ',
-                members = [user1, user2])
+                members=[user1, user2])
         DBSession.add(band)
         DBSession.flush()
         self.assertEqual(user1.bands, [band])
         self.assertEqual(user2.bands, [band])
-        self.assertEqual(band.members, [user1, user2]) 
+        self.assertEqual(band.members, [user1, user2])
 
     def tearDown(self):
         DBSession.remove()

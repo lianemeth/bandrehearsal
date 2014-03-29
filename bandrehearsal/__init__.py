@@ -15,8 +15,8 @@ def main(global_config, **settings):
     DBSession.configure(bind=engine)
     Base.metadata.bind = engine
     authn_policy = AuthTktAuthenticationPolicy(
-            settings['bandrehearsal.secret_key'],
-            hashalg='sha512')
+        settings['bandrehearsal.secret_key'],
+        hashalg='sha512')
     config = Configurator(settings=settings, root_factory=get_root)
     config.set_authentication_policy(authn_policy)
     authz_policy = ACLAuthorizationPolicy()

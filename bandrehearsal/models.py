@@ -22,7 +22,7 @@ Base = declarative_base()
 
 class User(Base):
     __tablename__ = 'users'
-    
+
     @property
     def __acl__(self):
         acl = [(Allow, 'admin', 'edit')]
@@ -39,7 +39,6 @@ class User(Base):
     active = sa.Column(sa.Boolean, default=True)
     creation = sa.Column(sa.DateTime, default=datetime.now)
 
-
     @property
     def password(self):
         return self.pswd
@@ -52,7 +51,7 @@ class User(Base):
 
     def check_password(self, passwd):
         return sha256_crypt.verify(passwd, self.password)
-    
+
     class WrongCredential(Exception):
         pass
 
@@ -86,7 +85,7 @@ class Band(Base):
     name = sa.Column(sa.Text)
     description = sa.Column(sa.Text)
     creation = sa.Column(sa.DateTime, default=datetime.now)
-    
+
     members = relationship("User",
             secondary="user_x_band",
             backref="bands")
@@ -94,11 +93,14 @@ class Band(Base):
     def __unicode__(self):
         return self.name
 
+
 class UserBand(Base):
     __tablename__ = 'user_x_band'
 
-    band_id = sa.Column(sa.Integer, sa.ForeignKey('bands.id'), primary_key=True)
-    user_id = sa.Column(sa.Integer, sa.ForeignKey('users.id'), primary_key=True)
+    band_id = sa.Column(sa.Integer, sa.ForeignKey('bands.id'),
+            primary_key=True)
+    user_id = sa.Column(sa.Integer, sa.ForeignKey('users.id'),
+            primary_key=True)
     role = sa.Column(sa.Text)
 
     def __unicode__(self):

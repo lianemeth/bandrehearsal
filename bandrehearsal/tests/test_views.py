@@ -30,13 +30,13 @@ class TestViews(unittest.TestCase):
         DBSession.add(user)
         DBSession.flush()
         request = testing.DummyRequest()
-        request.POST = {'user' : 'user',
-                        'password' : 'password'}
+        request.POST = {'user': 'user',
+                        'password': 'password'}
         loginview = LoginView(request)
         self.assertIsInstance(loginview.login(), HTTPFound)
         request1 = testing.DummyRequest()
-        request1.POST = {'user' : 'ussjak',
-                        'password' : 'password123'}
+        request1.POST = {'user': 'ussjak',
+                        'password': 'password123'}
         loginview1 = LoginView(request1)
         res = loginview1.login()
         self.assertTrue(res['fail'])
@@ -82,7 +82,7 @@ class TestViews(unittest.TestCase):
         id = user.id
         request = testing.DummyRequest()
         request.context = user
-        res = delete_user(request)
+        delete_user(request)
         self.assertFalse(DBSession.query(User).get(id).active)
 
     def test_edit_user(self):
@@ -95,9 +95,9 @@ class TestViews(unittest.TestCase):
         DBSession.flush()
         id = user.id
         request = testing.DummyRequest()
-        request.POST = {'email' : 'new@nova.com'}
+        request.POST = {'email': 'new@nova.com'}
         request.context = user
-        res = edit_user(request)
+        edit_user(request)
         user = DBSession.query(User).get(id)
         self.assertEqual(user.email, request.POST['email'])
 
