@@ -4,7 +4,7 @@ from pyramid.authorization import ACLAuthorizationPolicy
 
 from sqlalchemy import engine_from_config
 
-from .models import DBSession, Base
+from .models import DBSession, Base, get_user
 from .traversal import get_root
 
 
@@ -21,6 +21,7 @@ def main(global_config, **settings):
     config.set_authentication_policy(authn_policy)
     authz_policy = ACLAuthorizationPolicy()
     config.set_authorization_policy(authz_policy)
+    config.add_request_method(get_user, 'user', reify=True)
     config.add_static_view('static', 'static', cache_max_age=3600)
     config.add_static_view('deform', 'deform:static')
     config.add_route('home', '/')

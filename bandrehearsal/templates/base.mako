@@ -30,12 +30,18 @@
 			</li>
 		</ul>
 		<section class="top-bar-section">
+		% if user is None:	
 			<ul class="left">
 				<li><a href="#">Sign in</a></li>
 			</ul>
 			<ul class="left">
 				<li><a href="/login">Login</a></li>
 			</ul>
+		% else:
+			<ul class="left">
+				<li><a href="#">${request.user}</a></li>
+			</ul>
+		% endif
 		</section>
 	</nav>
 		<%block name="content" />

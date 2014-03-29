@@ -13,7 +13,7 @@ from zope.sqlalchemy import ZopeTransactionExtension
 
 from passlib.hash import sha256_crypt
 
-from pyramid.security import Allow, Authenticated
+from pyramid.security import Allow, Authenticated, unauthenticated_userid
 
 from datetime import datetime
 
@@ -84,8 +84,8 @@ class User(Base, Mixin):
             raise cls.WrongCredential
 
     @classmethod
-    def get(cls, id):
-        return DBSession.query(User).get(id)
+    def get_by_login(cls, login):
+        return DBSession.query(User).filter_by(login=login).one()
 
     @classmethod
     def actives(cls):
@@ -93,6 +93,12 @@ class User(Base, Mixin):
 
     def __unicode__(self):
         return self.name
+
+
+def get_user(request):
+    login = unauthenticated_userid(request)
+    if login is not None:
+        return User.get_by_login(login)
 
 
 class UserBand(Base, Mixin):
