@@ -39,7 +39,7 @@
 			</ul>
 		% else:
 			<ul class="left">
-				<li><a href="#">${request.user}</a></li>
+				<li><a href="/user/${request.user.id}/edit">${request.user}</a></li>
 			</ul>
 		% endif
 		</section>

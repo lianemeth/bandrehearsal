@@ -26,7 +26,6 @@ def main(global_config, **settings):
     config.add_static_view('deform', 'deform:static')
     config.add_route('home', '/')
     config.add_route('login', '/login')
-    config.add_route('select_band', '/select')
-    config.add_route('app', '/{band}/*traverse')
+    config.add_route('app', '/app/*traverse')
     config.scan()
     return config.make_wsgi_app()

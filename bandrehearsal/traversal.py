@@ -17,4 +17,5 @@ class UsersResource(BandResource):
 
 def get_root(request):
     root = BandResource('/', None)
+    root['user'] = UsersResource('user', root)
     return root

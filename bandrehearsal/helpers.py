@@ -1,5 +1,6 @@
 from pyramid.i18n import TranslationString as _
 from pyramid.httpexceptions import HTTPFound
+from models import DBSession
 import deform
 
 def merge_appstruct(record, appstruct):

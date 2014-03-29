@@ -91,7 +91,7 @@ class UserEditSchema(colander.Schema):
     
 
 @view_config(name='edit', context=User,
-    renderer='bandrehearsal:templates/users.mako', permission='edit')
+    renderer='bandrehearsal:templates/edit_user.mako', permission='edit')
 def edit_user(request):
     def unique_login(form, value):
         try:
@@ -100,10 +100,10 @@ def edit_user(request):
             exc = colander.Invalid(form, _('User login already in use'))
             raise exc
     form = deform.Form(UserEditSchema(validator=unique_login), buttons=(_('send'),))
-    return generic_edit_view(request, form)
+    return generic_edit_view(request, form, redirect='/')
 
 
 @view_config(name='view', context=User,
-    renderer='bandrehearsal:templates/users.mako', permission='view')
+    renderer='bandrehearsal:templates/view_user.mako', permission='view')
 def view_user(request):
     return {'user': request.context}
