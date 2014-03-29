@@ -9,10 +9,8 @@ def merge_appstruct(record, appstruct):
     return record
 
 
-def generic_edit_view(request, record=None, redirect='../'):
+def generic_edit_view(request, form, record=None, redirect='../'):
     record = record or request.context
-    form = deform.Form(record.__colanderalchemy__, 
-            buttons=(_('send'),))
     if request.POST:
         form_items = request.POST.items()
         try:

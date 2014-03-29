@@ -95,11 +95,9 @@ class TestViews(unittest.TestCase):
         DBSession.flush()
         id = user.id
         request = testing.DummyRequest()
-        request.POST = {'email': 'new@nova.com'}
         request.context = user
-        edit_user(request)
-        user = DBSession.query(User).get(id)
-        self.assertEqual(user.email, request.POST['email'])
+        res = edit_user(request)
+        self.assertTrue(res['form'])
 
     def test_view_user(self):
         from ..models import User

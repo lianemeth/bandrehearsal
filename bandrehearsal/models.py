@@ -8,7 +8,6 @@ from sqlalchemy.orm import (
     class_mapper)
 
 from sqlalchemy.orm.exc import NoResultFound
-from colanderalchemy import setup_schema
 
 from zope.sqlalchemy import ZopeTransactionExtension
 
@@ -36,14 +35,6 @@ class Mixin(object):
         if with_empty:
             l = [('','')] + l
         return l
-
-    @property
-    def id(self):
-        pks = class_mapper(self.__class__).primary_key
-        if len(pks) == 1:
-            return getattr(self, pks[0].name)
-        elif len(pks) > 1:
-            return ( getattr(self, pk.name) for pk in pks )
 
 
 class User(Base, Mixin):
@@ -104,9 +95,6 @@ class User(Base, Mixin):
         return self.name
 
 
-setup_schema(None, User)
-
-
 class UserBand(Base, Mixin):
     __tablename__ = 'user_x_band'
 
@@ -134,6 +122,3 @@ class Band(Base, Mixin):
 
     def __unicode__(self):
         return self.name
-
-
-setup_schema(None, Band)

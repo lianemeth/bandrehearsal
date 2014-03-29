@@ -1,9 +1,11 @@
 from pyramid.view import view_config
 
-from ..models import User
+from ..models import User, DBSession
 from ..helpers import generic_edit_view
 from pyramid.security import remember
+from pyramid.i18n import TranslationString as _
 from pyramid.httpexceptions import HTTPFound
+from sqlalchemy.orm.exc import NoResultFound
 
 import colander
 import deform
@@ -12,11 +14,11 @@ import deform
 class LoginSchema(colander.Schema):
     user = colander.SchemaNode(
         colander.String(),
-        description=u"Type your user")
+        description=_("Type your user"))
     password = colander.SchemaNode(
         colander.String(),
         widget=deform.widget.PasswordWidget(size=20),
-        description=u"Type your password")
+        description=_("Type your password"))
 
 
 class LoginView(object):
@@ -65,10 +67,40 @@ def delete_user(request):
     return {'status': 'success'}
 
 
+class UserEditSchema(colander.Schema):
+
+    name = colander.SchemaNode(
+            colander.String(),
+            description=_("Type your name"))
+    password = colander.SchemaNode(
+            colander.String(),
+            validator=colander.Length(min=5),
+            widget=deform.widget.CheckedPasswordWidget(size=20),
+            description=_('Type your password and confirm it'))
+    login = colander.SchemaNode(
+            colander.String(),
+            description=_("Type your login"))
+    email = colander.SchemaNode(
+            colander.String(),
+            validator=colander.Email(),
+            description=_('Type your e-mail'))
+    phone = colander.SchemaNode(
+            colander.String(),
+            description=_('Type your phone number'),
+            missing=colander.drop)
+    
+
 @view_config(name='edit', context=User,
     renderer='bandrehearsal:templates/users.mako', permission='edit')
 def edit_user(request):
-    return generic_edit_view(request)
+    def unique_login(form, value):
+        try:
+            DBSession.query(User).filter_by(login=value['login']).one()
+        except NoResultFound:
+            exc = colander.Invalid(form, _('User login already in use'))
+            raise exc
+    form = deform.Form(UserEditSchema(validator=unique_login), buttons=(_('send'),))
+    return generic_edit_view(request, form)
 
 
 @view_config(name='view', context=User,
