@@ -1,6 +1,7 @@
 from pyramid.view import view_config
 
 from ..models import User
+from ..helpers import generic_edit_view
 from pyramid.security import remember
 from pyramid.httpexceptions import HTTPFound
 
@@ -67,8 +68,7 @@ def delete_user(request):
 @view_config(name='edit', context=User,
     renderer='bandrehearsal:templates/users.mako', permission='edit')
 def edit_user(request):
-
-    return {}
+    return generic_edit_view(request)
 
 
 @view_config(name='view', context=User,
