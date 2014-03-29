@@ -18,6 +18,7 @@ requires = [
     'passlib',
     'deform',
     'colander',
+    'ColanderAlchemy',
     ]
 
 setup(name='bandrehearsal',

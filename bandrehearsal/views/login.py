@@ -67,6 +67,7 @@ def delete_user(request):
 @view_config(name='edit', context=User,
     renderer='bandrehearsal:templates/users.mako', permission='edit')
 def edit_user(request):
+
     return {}
 
 

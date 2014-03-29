@@ -4,9 +4,11 @@ from sqlalchemy.ext.declarative import declarative_base
 
 from sqlalchemy.orm import (
     scoped_session, sessionmaker,
-    synonym, relationship)
+    synonym, relationship,
+    class_mapper)
 
 from sqlalchemy.orm.exc import NoResultFound
+from colanderalchemy import setup_schema
 
 from zope.sqlalchemy import ZopeTransactionExtension
 
@@ -20,7 +22,31 @@ DBSession = scoped_session(sessionmaker(extension=ZopeTransactionExtension()))
 Base = declarative_base()
 
 
-class User(Base):
+class Mixin(object):
+
+    def to_appstruct(self):
+        return dict([(k, self.__dict__[k]) for k in sorted(self.__dict__) \
+            if '_sa_' != k[:4]])
+
+    @classmethod
+    def choices(cls, with_empty=False):
+        query = DBSession.query(cls)
+        pk = class_mapper(cls).primary_key[0].name
+        l = [ (getattr(record ,pk), unicode(record)) for record in query]
+        if with_empty:
+            l = [('','')] + l
+        return l
+
+    @property
+    def id(self):
+        pks = class_mapper(self.__class__).primary_key
+        if len(pks) == 1:
+            return getattr(self, pks[0].name)
+        elif len(pks) > 1:
+            return ( getattr(self, pk.name) for pk in pks )
+
+
+class User(Base, Mixin):
     __tablename__ = 'users'
 
     @property
@@ -78,23 +104,10 @@ class User(Base):
         return self.name
 
 
-class Band(Base):
-    __tablename__ = 'bands'
-
-    id = sa.Column(sa.Integer, primary_key=True)
-    name = sa.Column(sa.Text)
-    description = sa.Column(sa.Text)
-    creation = sa.Column(sa.DateTime, default=datetime.now)
-
-    members = relationship("User",
-            secondary="user_x_band",
-            backref="bands")
-
-    def __unicode__(self):
-        return self.name
+setup_schema(None, User)
 
 
-class UserBand(Base):
+class UserBand(Base, Mixin):
     __tablename__ = 'user_x_band'
 
     band_id = sa.Column(sa.Integer, sa.ForeignKey('bands.id'),
@@ -105,3 +118,22 @@ class UserBand(Base):
 
     def __unicode__(self):
         return self.name
+
+
+class Band(Base, Mixin):
+    __tablename__ = 'bands'
+
+    id = sa.Column(sa.Integer, primary_key=True)
+    name = sa.Column(sa.Text)
+    description = sa.Column(sa.Text)
+    creation = sa.Column(sa.DateTime, default=datetime.now)
+
+    members = relationship("User",
+                    secondary="user_x_band",
+                    backref="bands")
+
+    def __unicode__(self):
+        return self.name
+
+
+setup_schema(None, Band)
