@@ -30,7 +30,7 @@
 			</li>
 		</ul>
 		<section class="top-bar-section">
-		% if user is None:	
+		% if request.user is None:	
 			<ul class="left">
 				<li><a href="#">Sign in</a></li>
 			</ul>
