@@ -4,6 +4,7 @@ from models import DBSession
 import deform
 
 def merge_appstruct(record, appstruct):
+    '''merge a appstruct to a mapped record'''
     for key,value in appstruct.items():
         if hasattr(record, key):
             setattr(record, key, value)
@@ -11,6 +12,9 @@ def merge_appstruct(record, appstruct):
 
 
 def generic_edit_view(request, form, record=None, redirect='../'):
+    '''a generic edit view, it must receive a request and a form.
+    if record is None, will edit the request.context variable.
+    default value for undefined is ../'''
     record = record or request.context
     if request.POST:
         form_items = request.POST.items()

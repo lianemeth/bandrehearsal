@@ -12,6 +12,7 @@ import deform
 
 
 class LoginSchema(colander.Schema):
+    '''colander schema for login form'''
     user = colander.SchemaNode(
         colander.String(),
         description=_("Type your user"))
@@ -22,6 +23,7 @@ class LoginSchema(colander.Schema):
 
 
 class LoginView(object):
+    '''view responsible for login users'''
 
     def __init__(self, request):
         self.request = request
@@ -56,18 +58,21 @@ class LoginView(object):
 @view_config(name='list', context=User,
     renderer='bandrehearsal:templates/users.mako', permission='edit')
 def list_users(request):
+    '''a view that return all active users'''
     users = User.actives()
     return {'list': users}
 
 
 @view_config(name='delete', context=User,
-    renderer='bandrehearsal:templates/users.mako', permission='edit')
+    renderer='json', permission='edit')
 def delete_user(request):
+    '''json view for user removal'''
     request.context.active = False
     return {'status': 'success'}
 
 
 class UserEditSchema(colander.Schema):
+    '''colander schema for user edition/creation'''
 
     name = colander.SchemaNode(
             colander.String(),
@@ -93,6 +98,7 @@ class UserEditSchema(colander.Schema):
 @view_config(name='edit', context=User,
     renderer='bandrehearsal:templates/edit_user.mako', permission='edit')
 def edit_user(request):
+    '''a view for user edition/creation'''
     def unique_login(form, value):
         try:
             DBSession.query(User).filter_by(login=value['login']).one()
@@ -106,4 +112,5 @@ def edit_user(request):
 @view_config(name='view', context=User,
     renderer='bandrehearsal:templates/view_user.mako', permission='view')
 def view_user(request):
+    '''view that return a single user'''
     return {'user': request.context}

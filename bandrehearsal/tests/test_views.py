@@ -48,7 +48,7 @@ class TestViews(unittest.TestCase):
         self.config.testing_securitypolicy(userid='user',
                 permissive=False)
         request = testing.DummyRequest()
-        self.assertTrue(home(request))
+        self.assertTrue(home(request) is not None)
 
     def test_list_users(self):
         from ..models import User
