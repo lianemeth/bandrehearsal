@@ -1,7 +1,7 @@
 from .models import *
 
 
-class BandResource(dict):
+class Resource(dict):
 
     def __init__(self, name, parent, *args, **kwargs):
         self.__name__ = name
@@ -9,13 +9,28 @@ class BandResource(dict):
         super(BandResource, self).__init__(*args, **kwargs)
 
 
-class UsersResource(BandResource):
+class ModelResource(Resource):
+    '''A resource class that will return
+    a cls.model object'''
+
+    model = None
 
     def __getitem__(self, item):
-        return DBSession.query(User).get(item)
+        if item == 'new':
+            return self.model()
+        return DBSession.query(self.model).get(item)
+
+
+class UsersResource(Resource):
+    model = User
+
+
+class BandResource(Resource):
+    model = Band
 
 
 def get_root(request):
-    root = BandResource('/', None)
+    root = Resource('/', None)
     root['user'] = UsersResource('user', root)
+    root['band'] = BandResource('band', root)
     return root

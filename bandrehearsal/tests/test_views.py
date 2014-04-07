@@ -45,10 +45,19 @@ class TestViews(unittest.TestCase):
 
     def test_home(self):
         from ..views.home import home
+        from ..models import User
+        user1 = User(login='user',
+                password='password',
+                email='user@user.com')
+        DBSession.add(user1)
+        DBSession.flush()
         self.config.testing_securitypolicy(userid='user',
                 permissive=False)
         request = testing.DummyRequest()
-        self.assertTrue(home(request) is not None)
+        request.user = user1
+        res = home(request)
+        self.assertTrue(res is not None)
+        self.assertTrue('bands' in res)
 
     def test_list_users(self):
         from ..models import User

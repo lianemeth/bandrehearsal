@@ -1,7 +1,11 @@
 from pyramid.view import view_config
-from pyramid.security import authenticated_userid
 
 
 @view_config(route_name='home', renderer='bandrehearsal:templates/home.mako')
 def home(request):
-    return {}
+    '''BandRehearsal home page includes all relevant information about your
+    user'''
+    bands = None
+    if request.user:
+        bands = request.user.bands
+    return {'bands': bands}
