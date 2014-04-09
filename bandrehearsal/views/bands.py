@@ -46,4 +46,7 @@ class EditBandView(object):
                 'requirements' : form.get_widget_resources()}
 
         def process_form(self, appstruct):
+            # TODO for each member in member list
+            # if e-mail is registered, send notification to owner
+            # if e-mail is not registered, send registration e-mail
             DBSession.merge(self.band)
