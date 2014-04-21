@@ -18,6 +18,7 @@ requires = [
     'passlib',
     'deform',
     'colander',
+    'webtest',
     ]
 
 setup(name='bandrehearsal',

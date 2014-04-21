@@ -6,7 +6,7 @@ class Resource(dict):
     def __init__(self, name, parent, *args, **kwargs):
         self.__name__ = name
         self.__parent__ = parent
-        super(BandResource, self).__init__(*args, **kwargs)
+        super(Resource, self).__init__(*args, **kwargs)
 
 
 class ModelResource(Resource):

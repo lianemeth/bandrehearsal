@@ -1,11 +1,10 @@
 import unittest
 
 from pyramid import testing
-
 from ..models import DBSession
 
 
-class TestMyView(unittest.TestCase):
+class TestBandRehearsalViews(unittest.TestCase):
     def setUp(self):
         self.config = testing.setUp()
         from sqlalchemy import create_engine
