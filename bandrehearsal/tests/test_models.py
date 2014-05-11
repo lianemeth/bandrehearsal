@@ -28,20 +28,22 @@ class TestBandRehearsalViews(unittest.TestCase):
         self.assertTrue(user.check_password('new pswd'))
         self.assertNotEqual(p1, p2)
         self.assertEqual(User.log('someone', 'new pswd'), user)
+        self.assertEqual(User.has_email_registered('some@mail.com'), user)
+        self.assertIsNone(User.has_email_registered('hellow@dollie.com'))
 
     def test_bands(self):
         from ..models import User, Band
-        user1 = User(login='brony',
+        user1 = User(login='plug one',
                 password='pswd',
                 email='some@mail.com')
-        user2 = User(login='someone',
+        user2 = User(login='plug two',
                 password='123',
                 email='pineapple@uol.com')
         DBSession.add(user1)
         DBSession.add(user2)
         DBSession.flush()
-        band = Band(name='The Mini Ponies',
-                description='A post-rock brony ',
+        band = Band(name='De La Soul',
+                description="it's just me, myself and I",
                 members=[user1, user2])
         DBSession.add(band)
         DBSession.flush()

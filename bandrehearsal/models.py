@@ -17,6 +17,8 @@ from pyramid.security import Allow, Authenticated, unauthenticated_userid
 
 from datetime import datetime
 
+from uuid import uuid4
+
 # initialize sqlalchemy Session
 DBSession = scoped_session(sessionmaker(extension=ZopeTransactionExtension()))
 # initialize declarative base, for sqlalchemy orm
@@ -42,6 +44,9 @@ class Mixin(object):
             l = [('','')] + l
         return l
 
+def activation_url(uid):
+    #TODO: generate an user activation url
+    return uid
 
 class User(Base, Mixin):
     '''an user of the system'''
@@ -59,8 +64,9 @@ class User(Base, Mixin):
     name = sa.Column(sa.Text)
     pswd = sa.Column(sa.String, nullable=False)
     login = sa.Column(sa.String, nullable=False, unique=True)
-    email = sa.Column(sa.Text, nullable=False)
+    email = sa.Column(sa.Text, nullable=False, unique=True)
     phone = sa.Column(sa.Text)
+    activation_url = sa.Column(sa.Text)
     active = sa.Column(sa.Boolean, default=True)
     creation = sa.Column(sa.DateTime, default=datetime.now)
 
@@ -77,6 +83,16 @@ class User(Base, Mixin):
     def check_password(self, passwd):
         return sha256_crypt.verify(passwd, self.password)
 
+    @classmethod
+    def new_registration_user(cls, email):
+        uid1 = str(uuid4())
+        uid2 = str(uuid4())
+        return User(pswd=uid1, 
+                login=uid2,
+                email=email,
+                activation_url=activation_url(uid2),
+                active=False)
+
     class WrongCredential(Exception):
         pass
 
@@ -88,7 +104,8 @@ class User(Base, Mixin):
         Case the user was not found or the password didn't match,
         returns a WrongCredential exception'''
         try:
-            user = DBSession.query(User).filter(user_login == User.login).one()
+            user = DBSession.query(User).filter(user_login == User.login,
+                    User.active == True).one()
         except NoResultFound:
             raise cls.WrongCredential
         if user.check_password(password):
@@ -104,6 +121,16 @@ class User(Base, Mixin):
     def actives(cls):
         '''return all active users'''
         return DBSession.query(User).filter_by(active=True)
+
+    @classmethod
+    def has_email_registered(self, email):
+        '''check if it exists an User registered with this e-mail
+        if it does, return him, else return None'''
+        try:
+            user = DBSession.query(User).filter_by(email=email).one()
+        except NoResultFound:
+            return None
+        return user
 
     def __unicode__(self):
         return self.name
