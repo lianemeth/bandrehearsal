@@ -1,8 +1,6 @@
-from Mailer import Mailer
+from mailaction import MailAction
 
-class RegistrationMailer(Mailer):
+class RegistrationMailer(MailAction):
     #TODO render mail to new user registrations
-
-    def __init__(self, *args, **kwargs):
-        pass
+    pass
 

@@ -1,7 +1,5 @@
-from Mailer import Mailer
+from mailaction import MailAction
 
-class NewBandMailer(Mailer):
+class NewBandMailer(MailAction):
     # TODO: inform users they are in a new band
-
-    def __init__(self, *args, **kwargs):
-        pass
+    pass

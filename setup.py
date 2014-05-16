@@ -19,6 +19,7 @@ requires = [
     'deform',
     'colander',
     'webtest',
+    'mailer',
     ]
 
 setup(name='bandrehearsal',
