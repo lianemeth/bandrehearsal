@@ -44,9 +44,6 @@ class Mixin(object):
             l = [('','')] + l
         return l
 
-def activation_url(uid):
-    #TODO: generate an user activation url
-    return uid
 
 class User(Base, Mixin):
     '''an user of the system'''
@@ -63,10 +60,10 @@ class User(Base, Mixin):
     id = sa.Column(sa.Integer, primary_key=True)
     name = sa.Column(sa.Text)
     pswd = sa.Column(sa.String, nullable=False)
-    login = sa.Column(sa.String, nullable=False, unique=True)
-    email = sa.Column(sa.Text, nullable=False, unique=True)
+    login = sa.Column(sa.String, nullable=False, unique=True, index=True)
+    email = sa.Column(sa.Text, nullable=False, unique=True, index=True)
     phone = sa.Column(sa.Text)
-    activation_url = sa.Column(sa.Text)
+    activation_uid = sa.Column(sa.Text)
     active = sa.Column(sa.Boolean, default=True)
     creation = sa.Column(sa.DateTime, default=datetime.now)
 
@@ -90,7 +87,7 @@ class User(Base, Mixin):
         return User(pswd=uid1, 
                 login=uid2,
                 email=email,
-                activation_url=activation_url(uid2),
+                activation_uid=uid2,
                 active=False)
 
     class WrongCredential(Exception):
@@ -130,6 +127,16 @@ class User(Base, Mixin):
             user = DBSession.query(User).filter_by(email=email).one()
         except NoResultFound:
             return None
+        return user
+
+    @classmethod
+    def activate(cls, uid):
+        try:
+            user = DBSession.query(User).filter_by(activation_uid=uid).one()
+        except NoResultFound as exc:
+            raise exc
+        user.active = True
+        DBSession.merge(user)
         return user
 
     def __unicode__(self):

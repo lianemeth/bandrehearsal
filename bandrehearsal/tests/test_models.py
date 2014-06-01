@@ -30,6 +30,14 @@ class TestBandRehearsalViews(unittest.TestCase):
         self.assertEqual(User.log('someone', 'new pswd'), user)
         self.assertEqual(User.has_email_registered('some@mail.com'), user)
         self.assertIsNone(User.has_email_registered('hellow@dollie.com'))
+        regist_user = User.new_registration_user('mailwale@walemail.com')
+        DBSession.add(regist_user)
+        DBSession.flush()
+        self.assertTrue(regist_user)
+        self.assertFalse(regist_user.active)
+        regist_user = User.activate(regist_user.activation_uid)
+        self.assertTrue(regist_user.active)
+
 
     def test_bands(self):
         from ..models import User, Band

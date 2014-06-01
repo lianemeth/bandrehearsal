@@ -22,10 +22,15 @@ class ModelResource(Resource):
 
 
 class UsersResource(Resource):
-    model = User
+
+    def __getitem__(self, item):
+        if item == 'activate':
+            return ActivationResource('activate', self)
+        return DBSession.query(self.User).get(item)
 
 
-class BandResource(Resource):
+
+class BandResource(ModelResource):
     model = Band
 
 
