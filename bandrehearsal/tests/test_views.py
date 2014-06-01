@@ -125,7 +125,7 @@ class TestViews(unittest.TestCase):
         DBSession.add(regist_user)
         DBSession.flush()
         class MockActivationResource(object):
-            self.__name__ = str(regist_user.activation_uid)
+            __name__ = str(regist_user.activation_uid)
         request = testing.DummyRequest(context=MockActivationResource())
         activate_user(request)
         regist_user = User.get_by_login(regist_user.email)

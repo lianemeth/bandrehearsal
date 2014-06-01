@@ -120,4 +120,5 @@ def view_user(request):
         renderer='bandrehearsal:templates/activated_user.mako')
 def activate_user(request):
     '''activate a user from his activation_uid on the URL'''
-    return {}
+    user = User.activate(request.context.__name__)
+    return {'user' : user}

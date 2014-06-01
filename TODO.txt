@@ -1,3 +1,3 @@
 - NewBandMailer 
 - RegistrationMailer 
-- Activate User View
+- activated_user.mako
