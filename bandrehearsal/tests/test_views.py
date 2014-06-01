@@ -116,3 +116,17 @@ class TestViews(unittest.TestCase):
         request.context = user
         res = view_user(request)
         self.assertEqual(res['user'], user)
+
+
+    def test_activate_user(self):
+        from ..models import User
+        from ..views.users import activate_user
+        regist_user = User.new_registration_user('lol@rofl.com')
+        DBSession.add(regist_user)
+        DBSession.flush()
+        class MockActivationResource(object):
+            self.__name__ = str(regist_user.activation_uid)
+        request = testing.DummyRequest(context=MockActivationResource())
+        activate_user(request)
+        regist_user = User.get_by_login(regist_user.email)
+        self.assertTrue(regist_user.active)

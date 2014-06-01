@@ -85,7 +85,7 @@ class User(Base, Mixin):
         uid1 = str(uuid4())
         uid2 = str(uuid4())
         return User(pswd=uid1, 
-                login=uid2,
+                login=email,
                 email=email,
                 activation_uid=uid2,
                 active=False)

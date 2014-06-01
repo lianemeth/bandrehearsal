@@ -21,6 +21,10 @@ class ModelResource(Resource):
         return DBSession.query(self.model).get(item)
 
 
+class ActivationResource(Resource):
+    pass
+
+
 class UsersResource(Resource):
 
     def __getitem__(self, item):

@@ -114,3 +114,10 @@ def edit_user(request):
 def view_user(request):
     '''view that return a single user'''
     return {'user': request.context}
+
+
+@view_config(context='..traversal.ActivationResource',
+        renderer='bandrehearsal:templates/activated_user.mako')
+def activate_user(request):
+    '''activate a user from his activation_uid on the URL'''
+    return {}
