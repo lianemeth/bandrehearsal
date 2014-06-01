@@ -22,7 +22,7 @@ class TestViews(unittest.TestCase):
         DBSession.remove()
 
     def test_login_view(self):
-        from ..views.login import LoginView
+        from ..views.users import LoginView
         from ..models import User
         user = User(login='user',
                 password='password',
@@ -61,7 +61,7 @@ class TestViews(unittest.TestCase):
 
     def test_list_users(self):
         from ..models import User
-        from ..views.login import list_users
+        from ..views.users import list_users
         user1 = User(login='user',
                 password='password',
                 email='user@user.com')
@@ -78,7 +78,7 @@ class TestViews(unittest.TestCase):
 
     def test_delete_user(self):
         from ..models import User
-        from ..views.login import delete_user
+        from ..views.users import delete_user
         user = User(login='user',
                 password='password',
                 email='user@user.com')
@@ -92,7 +92,7 @@ class TestViews(unittest.TestCase):
 
     def test_edit_user(self):
         from ..models import User
-        from ..views.login import edit_user
+        from ..views.users import edit_user
         user = User(login='user',
                 password='password',
                 email='user@user.com')
@@ -106,7 +106,7 @@ class TestViews(unittest.TestCase):
 
     def test_view_user(self):
         from ..models import User
-        from ..views.login import view_user
+        from ..views.users import view_user
         user = User(login='user',
                 password='password',
                 email='user@user.com')

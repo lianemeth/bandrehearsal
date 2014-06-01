@@ -1,3 +1,3 @@
-- activation_url models.py:46 
 - NewBandMailer 
 - RegistrationMailer 
+- Activate User View
