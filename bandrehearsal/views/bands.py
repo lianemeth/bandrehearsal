@@ -1,5 +1,5 @@
 from pyramid.view import view_config
-from ..models import Band, DBSession
+from ..models import Band, DBSession, User
 from ..helpers import generic_edit_view
 from ..mailers import NewBandMailer, RegistrationMailer
 
@@ -32,9 +32,10 @@ class EditBandView(object):
 
     @view_config(context=Band, name='edit',
             renderer='bandrehearsal:templates/band.mako')
-    def view(request):
-        if request.POST:
-            form_items = request.POST.items()
+    def view(self):
+        form = deform.Form(BandSchema(), buttons=('Submit',))
+        if self.request.POST:
+            form_items = self.request.POST.items()
             try:
                 appstruct = form.validate(form_items)
             except deform.ValidationFailure, e:
@@ -42,23 +43,24 @@ class EditBandView(object):
                         'requirements' : form.get_widget_resources()}
             self.process_form(appstruct)
             return HTTPFound(location='../')
-        appstruct = record.to_appstruct()
+        appstruct = self.band.to_appstruct()
         return {'form' : form.render(appstruct=appstruct), 
                 'requirements' : form.get_widget_resources()}
 
-        def process_form(self, appstruct):
-            # for each member in member list
-            for member in appstruct['members']:
-                user = Member.has_email_registered(member.email)
-                # if e-mail is registered, send notification to owner
-                # if e-mail is not registered, send registration e-mail and
-                # create new inactive user
-                if user is None:
-                    user = User.new_registration_user(member.email)
-                    DBSession.add(user)
-                    mailer = RegistrationMailer(member.email)
-                else:
-                    mailer = NewBandMailer(member.email)
-                self.band.members.append(user)
-                mailer.send()
-            DBSession.merge(self.band)
+    def process_form(self, appstruct):
+        # for each member in member list
+        for member in appstruct['members']:
+            user = User.has_email_registered(member)
+            # if e-mail is registered, send notification to owner
+            # if e-mail is not registered, send registration e-mail and
+            # create new inactive user
+            if user is None:
+                user = User.new_registration_user(member)
+                DBSession.add(user)
+                mailer = RegistrationMailer(self.request, member)
+            else:
+                mailer = NewBandMailer(member, request=self.request,
+                        user=user, band=self.band)
+            self.band.members.append(user)
+            mailer.send()
+        DBSession.merge(self.band)

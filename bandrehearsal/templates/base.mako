@@ -41,6 +41,9 @@
 			<ul class="left">
 				<li><a href="/user/${request.user.id}/edit">${request.user}</a></li>
 			</ul>
+			<ul class="left">
+				<li><a href="/band/new/edit">New Band</a></li>
+			</ul>
 		% endif
 		</section>
 	</nav>
