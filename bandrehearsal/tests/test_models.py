@@ -1,10 +1,11 @@
 import unittest
 
 from pyramid import testing
+from datetime import datetime
 from ..models import DBSession
 
 
-class TestBandRehearsalViews(unittest.TestCase):
+class TestModels(unittest.TestCase):
     def setUp(self):
         self.config = testing.setUp()
         from sqlalchemy import create_engine
@@ -48,6 +49,27 @@ class TestBandRehearsalViews(unittest.TestCase):
         self.assertEqual(user1.bands, [band])
         self.assertEqual(user2.bands, [band])
         self.assertEqual(band.members, [user1, user2])
+
+    def test_event(self):
+        from ..models import User, Band, Event
+        user1 = User(login='neobula',
+                password='pswd',
+                email='some@mail.com')
+        DBSession.add(user1)
+        DBSession.flush()
+        band = Band(name='The Arthur Conan Doyle Hand Cream',
+                description='Moisturizing rock music',
+                members=[user1])
+        DBSession.add(band)
+        DBSession.flush()
+        event = Event(time=datetime.now(),
+                place='Silver Rocket',
+                band=band)
+        DBSession.add(event)
+        DBSession.flush()
+        self.assertTrue(event.name)
+        self.assertEqual(event.band_id, band.id)
+        self.assertEqual(event.name, event.default_name)
 
     def tearDown(self):
         DBSession.remove()

@@ -28,7 +28,7 @@ class Mixin(object):
 
     def to_appstruct(self):
         '''returns a appstruct for colander'''
-        return dict([(k, self.__dict__[k]) for k in sorted(self.__dict__) \
+        return dict([(k, self.__dict__[k]) for k in sorted(self.__dict__)
             if '_sa_' != k[:4]])
 
     @classmethod
@@ -37,9 +37,9 @@ class Mixin(object):
         in the (id, name) format'''
         query = DBSession.query(cls)
         pk = class_mapper(cls).primary_key[0].name
-        l = [ (getattr(record ,pk), unicode(record)) for record in query]
+        l = [(getattr(record, pk), unicode(record)) for record in query]
         if with_empty:
-            l = [('','')] + l
+            l = [('', '')] + l
         return l
 
 
@@ -149,6 +149,45 @@ class Band(Base, Mixin):
     members = relationship("User",
                     secondary="user_x_band",
                     backref="bands")
+
+    def __unicode__(self):
+        return self.name
+
+
+class EventType(Base, Mixin):
+    '''A type of event, can be a gig, a rehearsal
+    or idk.
+    '''
+    __tablename__ = 'event_types'
+
+    id = sa.Column(sa.Integer, primary_key=True)
+    name = sa.Column(sa.Text)
+
+    def __unicode__(self):
+        return self.name
+
+
+class Event(Base, Mixin):
+    '''An event, with a band, in a place, a reason,
+    and that sort of thing.
+    '''
+    __tablename__ = 'events'
+
+    id = sa.Column(sa.Integer, primary_key=True)
+    name = sa.Column(sa.Text, default='')
+    time = sa.Column(sa.DateTime)
+    place = sa.Column(sa.Text)
+    band_id = sa.Column(sa.Integer, sa.ForeignKey('bands.id'))
+    creation = sa.Column(sa.DateTime, default=datetime.now)
+    band = relationship("Band")
+
+    def __init__(self, *args, **kwargs):
+        super(Event, self).__init__(*args, **kwargs)
+        self.name = self.name if self.name else self.default_name
+
+    @property
+    def default_name(self):
+        return u'{0} {1} {2}'.format(self.time, self.place, self.band)
 
     def __unicode__(self):
         return self.name
