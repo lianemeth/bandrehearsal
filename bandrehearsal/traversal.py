@@ -21,11 +21,11 @@ class ModelResource(Resource):
         return DBSession.query(self.model).get(item)
 
 
-class UsersResource(Resource):
+class UsersResource(ModelResource):
     model = User
 
 
-class BandResource(Resource):
+class BandResource(ModelResource):
     model = Band
 
 
