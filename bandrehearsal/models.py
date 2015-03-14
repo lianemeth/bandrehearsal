@@ -28,8 +28,15 @@ class Mixin(object):
 
     def to_appstruct(self):
         '''returns a appstruct for colander'''
-        return dict([(k, self.__dict__[k]) for k in sorted(self.__dict__)
-            if '_sa_' != k[:4]])
+        return dict((k, self.__dict__[k]) for k in sorted(self.__dict__)
+            if '_sa_' != k[:4] and k != 'hide_fields')
+
+    def fields_to_display(self):
+        hide_fields = []
+        if hasattr(self, 'hide_fields'):
+            hide_fields += self.hide_fields
+        return dict((field, val) for field, val in self.to_appstruct().items()
+                if field not in hide_fields)
 
     @classmethod
     def choices(cls, with_empty=False):
@@ -50,10 +57,9 @@ class User(Base, Mixin):
 
     @property
     def __acl__(self):
-        acl = [(Allow, 'admin', 'edit')]
-        acl += (Allow, self.login, 'edit')
-        acl += (Allow, Authenticated, 'view')
-        return acl
+        return [(Allow, 'admin', 'edit'),
+            (Allow, self.login, 'edit'),
+            (Allow, Authenticated, 'view')]
 
     id = sa.Column(sa.Integer, primary_key=True)
     name = sa.Column(sa.Text)
@@ -63,6 +69,7 @@ class User(Base, Mixin):
     phone = sa.Column(sa.Text)
     active = sa.Column(sa.Boolean, default=True)
     creation = sa.Column(sa.DateTime, default=datetime.now)
+    hide_fields = ('pswd',)
 
     @property
     def password(self):

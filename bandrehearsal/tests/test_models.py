@@ -14,6 +14,21 @@ class TestModels(unittest.TestCase):
         DBSession.configure(bind=engine)
         Base.metadata.create_all(engine)
 
+    def test_mixin(self):
+        from ..models import Mixin
+        class FakeModel(Mixin):
+            def __init__(self):
+                self.field_1 = 'a'
+                self.field_2 = 'b'
+                self._sa_field = 'c'
+                self.hide_fields = ['field_2']
+
+        model = FakeModel()
+        self.assertEqual(model.to_appstruct(), 
+                {'field_1': 'a', 'field_2': 'b'})
+        self.assertEqual(model.fields_to_display(),
+                {'field_1': 'a'})
+
     def test_user(self):
         from ..models import User
         user = User(login='someone',
