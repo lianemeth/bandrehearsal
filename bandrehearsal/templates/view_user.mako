@@ -1,2 +1,4 @@
 <%inherit file="base.mako" />
-${user}
+<%block name="content" >
+	${user.fields_to_display()}
+</%block>

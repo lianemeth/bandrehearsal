@@ -1,6 +1,7 @@
 from pyramid.i18n import TranslationString as _
 from pyramid.httpexceptions import HTTPFound
 from models import DBSession
+from datetime import datetime
 import deform
 
 def merge_appstruct(record, appstruct):
@@ -29,3 +30,9 @@ def generic_edit_view(request, form, record=None, redirect='../'):
     appstruct = record.to_appstruct()
     return {'form' : form.render(appstruct=appstruct), 
             'requirements' : form.get_widget_resources()}
+
+def strf_appstruct(appstruct):
+    for field, val in sorted(appstruct):
+        if isinstance(val, datetime):
+            appstruct[field] = val.strftime("%d/%m/%Y")
+    return appstruct
