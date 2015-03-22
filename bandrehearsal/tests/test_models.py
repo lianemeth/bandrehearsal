@@ -66,7 +66,8 @@ class TestModels(unittest.TestCase):
         self.assertEqual(band.members, [user1, user2])
 
     def test_event(self):
-        from ..models import User, Band, Event
+        from ..models import (User, Band, Event,
+                EventComment)
         user1 = User(login='neobula',
                 password='pswd',
                 email='some@mail.com')
@@ -85,6 +86,10 @@ class TestModels(unittest.TestCase):
         self.assertTrue(event.name)
         self.assertEqual(event.band_id, band.id)
         self.assertEqual(event.name, event.default_name)
+        comment = EventComment(event_id=event.id,
+                user_id=user1.id,
+                content="...content")
+        self.assertEqual(comment.content, "...content")
 
     def tearDown(self):
         DBSession.remove()

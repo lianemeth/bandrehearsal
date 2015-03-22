@@ -152,6 +152,7 @@ class Band(Base, Mixin):
     name = sa.Column(sa.Text)
     description = sa.Column(sa.Text)
     creation = sa.Column(sa.DateTime, default=datetime.now)
+    active = sa.Column(sa.Boolean, default=True)
 
     members = relationship("User",
                     secondary="user_x_band",
@@ -186,6 +187,7 @@ class Event(Base, Mixin):
     place = sa.Column(sa.Text)
     band_id = sa.Column(sa.Integer, sa.ForeignKey('bands.id'))
     creation = sa.Column(sa.DateTime, default=datetime.now)
+    active = sa.Column(sa.Boolean, default=True)
     band = relationship("Band")
 
     def __init__(self, *args, **kwargs):
@@ -198,3 +200,18 @@ class Event(Base, Mixin):
 
     def __unicode__(self):
         return self.name
+
+
+class EventComment(Base, Mixin):
+    '''A comment attached to an Event'''
+
+    __tablename__ = 'event_comments'
+
+    id = sa.Column(sa.Integer, primary_key=True)
+    event_id = sa.Column(sa.Integer, sa.ForeignKey('events.id'),
+            nullable=False)
+    user_id = sa.Column(sa.Integer, sa.ForeignKey('users.id'),
+            nullable=False)
+    content = sa.Column(sa.Text, nullable=True)
+    active = sa.Column(sa.Boolean, default=True)
+    creation = sa.Column(sa.DateTime, default=datetime.now)
