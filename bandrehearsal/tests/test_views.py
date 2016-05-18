@@ -116,3 +116,28 @@ class TestViews(unittest.TestCase):
         request.context = user
         res = view_user(request)
         self.assertEqual(res['user'], user)
+
+    def test_get_user_events(self):
+        from ..models import User, Band, Event
+        from ..views.json_data import get_user_events
+        user = User(login='joannanewson',
+                password='sapokanikan',
+                email='user@user.com')
+        DBSession.add(user)
+        DBSession.flush()
+        request = testing.DummyRequest()
+        request.context = user
+        res = view_user(request)
+        self.assertEqual(res, {})
+        band = Band(name='The Mini Ponies',
+                description='A post-rock brony ',
+                members=[user])
+        event = Event(time=datetime.now(),
+                place='Silver Rocket',
+                band=band)
+        DBSession.add(Band)
+        DBSession.add(Event)
+        request = testing.DummyRequest()
+        request.context = user
+        res = view_user(request)
+        self.assertTrue('Silver Rocket' in res['events'])
