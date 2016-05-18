@@ -188,7 +188,7 @@ class Event(Base, Mixin):
     band_id = sa.Column(sa.Integer, sa.ForeignKey('bands.id'))
     creation = sa.Column(sa.DateTime, default=datetime.now)
     active = sa.Column(sa.Boolean, default=True)
-    band = relationship("Band")
+    band = relationship("Band", backref="events")
 
     def __init__(self, *args, **kwargs):
         super(Event, self).__init__(*args, **kwargs)
