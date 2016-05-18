@@ -1,4 +1,5 @@
 import unittest
+from datetime import datetime
 from pyramid import testing
 from pyramid.httpexceptions import HTTPFound
 from ..models import DBSession
@@ -119,6 +120,7 @@ class TestViews(unittest.TestCase):
 
     def test_get_user_events(self):
         from ..models import User, Band, Event
+        from ..views.login import view_user
         from ..views.json_data import get_user_events
         user = User(login='joannanewson',
                 password='sapokanikan',
@@ -128,16 +130,18 @@ class TestViews(unittest.TestCase):
         request = testing.DummyRequest()
         request.context = user
         res = view_user(request)
-        self.assertEqual(res, {})
+        self.assertEqual(res, {'user' : user, 'events': []})
         band = Band(name='The Mini Ponies',
                 description='A post-rock brony ',
                 members=[user])
+        place = 'Silver Rocket'
         event = Event(time=datetime.now(),
-                place='Silver Rocket',
+                place=place,
                 band=band)
-        DBSession.add(Band)
-        DBSession.add(Event)
+        DBSession.add(band)
+        DBSession.add(event)
         request = testing.DummyRequest()
         request.context = user
         res = view_user(request)
-        self.assertTrue('Silver Rocket' in res['events'])
+        event_places = [e.place for e in res['events']]
+        self.assertTrue(place in event_places)

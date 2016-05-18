@@ -9,6 +9,7 @@ from sqlalchemy.orm.exc import NoResultFound
 
 import colander
 import deform
+import itertools
 
 
 class LoginSchema(colander.Schema):
@@ -113,4 +114,7 @@ def edit_user(request):
     renderer='bandrehearsal:templates/view_user.mako', permission='view')
 def view_user(request):
     '''view that return a single user'''
-    return {'user': request.context}
+    user = request.context
+    b_events = [band.events for band in user.bands]
+    events = list(itertools.chain(*b_events))
+    return {'user': request.context, 'events': events }
